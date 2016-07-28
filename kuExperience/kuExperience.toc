@@ -1,0 +1,7 @@
+## Title: |cffFF1493ku|r|cffffffffExperience|r
+## Notes: Simple experience display
+## Author: Linus Henriksson
+## Credits: Industrial, Lonny
+## Version: 1.0
+## Interface: 70000
+experience.lua
