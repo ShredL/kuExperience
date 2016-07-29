@@ -7,18 +7,23 @@ end
 -- Config-ish
 local font, fontSize, fontOutline = "Fonts\\FRIZQT__.ttf", 12, 'OUTLINE'
 local mouseOver = false -- true/false
+local classColor = 'full' -- full/letter/none
+
+local textPos = { 'TOP', Minimap, 'TOP', 0, -1 }
 
 -- Variables
 local f = CreateFrame('Frame', 'kuExperienceFrame')
 local kuExperienceText = f:CreateFontString('kuExperienceText', 'OVERLAY')
 local experienceLeft
+local _, class = UnitClass('player')
+local playerColor = (CUSTOM_CLASS_COLORS or RAID_CLASS_COLORS)[class]
 
 -- We need a display
 f:SetFrameStrata('HIGH')
 f:SetWidth(30)
 f:SetHeight(fontSize+4)
 f:ClearAllPoints()
-f:SetPoint('BOTTOM', Minimap, 'BOTTOM', 0, -15)
+f:SetPoint(unpack(textPos))
 f:SetBackdrop({
 	bgFile = 'Interface\\ChatFrame\\ChatFrameBackground',
 	insets = { left = -1, right = -1, top = -1, bottom = -1 }
@@ -26,19 +31,35 @@ f:SetBackdrop({
 f:SetBackdropColor(0, 0, 0, 0)
 
 kuExperienceText:SetPoint('CENTER', f, 'CENTER', 0, 0)
-kuExperienceText:SetTextColor(1, 1, 1)
+if classColor == 'none' then
+	kuExperienceText:SetTextColor(1, 1, 1)
+else
+	kuExperienceText:SetTextColor(playerColor.r, playerColor.g, playerColor.b)
+end
 kuExperienceText:SetFont(font, fontSize, fontOutline)
 
 -- Squash numbers to more reasonable sizes
 local shortExp = function(number)
-	if number > 1e6 then
-		return string.format('%.2fm', number / 1e6)
-	elseif number > 1e5 then
-		return string.format('%dk', number / 1e3)
-	elseif number > 1e3 then
-		return string.format('%.1fk', number / 1e3)
+	if classColor == 'letter' then
+		if number > 1e6 then
+			return string.format('|cffffffff%.2f|rm', number / 1e6)
+		elseif number > 1e5 then
+			return string.format('|cffffffff%d|rk', number / 1e3)
+		elseif number > 1e3 then
+			return string.format('|cffffffff%.1f|rk', number / 1e3)
+		else
+			return string.format('|cffffffff%d|r', number)
+		end
 	else
-		return string.format('%d', number)
+		if number > 1e6 then
+			return string.format('%.2fm', number / 1e6)
+		elseif number > 1e5 then
+			return string.format('%dk', number / 1e3)
+		elseif number > 1e3 then
+			return string.format('%.1fk', number / 1e3)
+		else
+			return string.format('%d', number)
+		end
 	end
 end
 
